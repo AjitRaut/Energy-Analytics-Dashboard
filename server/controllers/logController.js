@@ -1,4 +1,4 @@
-const AccessLog = require('../models/AccessLog');
+const AccessLog = require('../models/AccessLogs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
