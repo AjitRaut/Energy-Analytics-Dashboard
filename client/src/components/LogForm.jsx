@@ -15,13 +15,34 @@ const LogForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+    
+        console.log(formData);  // Check if formData is populated
+    
+        const token = localStorage.getItem('token');  // Get the token from localStorage
+        console.log(token);  // Check if token is fetched correctly
+    
+        if (!token) {
+            alert('No token found. Please login again.');
+            return;
+        }
+    
         try {
-            await axios.post('/log', formData);
+            // Sending POST request with formData and token in headers
+            const response = await axios.post('/log/log', formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,  // Ensure the token is being sent here
+                    'Content-Type': 'application/json'  // Make sure the content type is JSON
+                }
+            });
+            console.log(response.data);  // Check the response data from the server
             alert('Log saved');
         } catch (error) {
-            alert('Failed to save log');
+            console.error('Error:', error);
+            alert('Failed to save log: ' + (error.response?.data?.message || 'Unknown error'));
         }
     };
+    
+    
 
     return (
         <form onSubmit={handleSubmit} className="bg-gray-100 p-4 rounded-lg mb-6">

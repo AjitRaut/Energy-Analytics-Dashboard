@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import ChartControls from './ChartControls';
+import BarChart from './BarChart';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -8,7 +10,6 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
 
 ChartJS.register(
   CategoryScale,
@@ -50,16 +51,18 @@ const Chart = ({ data }) => {
       {
         label: 'Energy Saving Mode ON',
         data: showModeOn ? modeOnData : Array(dates.length).fill(0),
-        backgroundColor: '#0066cc',
-        barThickness: 40,
+        backgroundColor: 'rgb(59, 130, 246)', // Bright blue
+        barThickness: 30,
         borderWidth: 0,
+        stack: 'stack0',
       },
       {
         label: 'Energy Saving Mode OFF',
         data: showModeOff ? modeOffData : Array(dates.length).fill(0),
-        backgroundColor: '#99ccff',
-        barThickness: 40,
+        backgroundColor: 'rgb(191, 219, 254)', // Light blue
+        barThickness: 30,
         borderWidth: 0,
+        stack: 'stack0',
       },
     ],
   };
@@ -70,6 +73,21 @@ const Chart = ({ data }) => {
     plugins: {
       tooltip: {
         enabled: true,
+        backgroundColor: 'white',
+        titleColor: 'black',
+        bodyColor: 'black',
+        borderColor: 'rgb(229, 231, 235)',
+        borderWidth: 1,
+        padding: 12,
+        displayColors: true,
+        callbacks: {
+          title: (context) => {
+            return context[0].label;
+          },
+          label: (context) => {
+            return `${context.dataset.label}: ${context.parsed.y.toFixed(1)} kWh`;
+          }
+        }
       },
       legend: {
         display: false,
@@ -81,84 +99,59 @@ const Chart = ({ data }) => {
         grid: {
           display: false,
         },
+        border: {
+          display: false,
+        },
         ticks: {
           font: {
             size: 12,
+            family: "'Inter', sans-serif",
           },
+          color: 'rgb(107, 114, 128)', // Gray-500
         },
       },
       y: {
         stacked: true,
         beginAtZero: true,
-        max: 40,
-        ticks: {
-          stepSize: 16,
-          font: {
-            size: 12,
-          },
+        border: {
+          display: false,
         },
         grid: {
-          color: '#E5E7EB',
+          color: 'rgb(243, 244, 246)',
+          drawTicks: false,
+        },
+        ticks: {
+          font: {
+            size: 12,
+            family: "'Inter', sans-serif",
+          },
+          color: 'rgb(107, 114, 128)', 
+          padding: 8,
         },
         title: {
           display: true,
           text: 'Energy Consumed (kWh)',
           font: {
             size: 12,
+            family: "'Inter', sans-serif",
+            weight: 'normal',
           },
-          padding: { bottom: 10 },
+          color: 'rgb(107, 114, 128)', 
+          padding: { bottom: 12 },
         },
       },
     },
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-4">
-      <h2 className="text-lg font-semibold mb-6 text-center">Energy Consumed</h2>
-      
-      <div className="flex justify-center items-center mb-6 space-x-6">
-        <label className="flex items-center space-x-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={showModeOn && showModeOff}
-            onChange={() => {
-              const toggleBoth = !(showModeOn && showModeOff);
-              setShowModeOn(toggleBoth);
-              setShowModeOff(toggleBoth);
-            }}
-            className="w-4 h-4"
-          />
-          <span className="text-sm">Both</span>
-        </label>
-        
-        <label className="flex items-center space-x-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={showModeOn}
-            onChange={() => setShowModeOn(!showModeOn)}
-            className="w-4 h-4"
-          />
-          <span className="text-sm" style={{ color: '#0066cc' }}>
-            Energy Saving Mode ON
-          </span>
-        </label>
-        
-        <label className="flex items-center space-x-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={showModeOff}
-            onChange={() => setShowModeOff(!showModeOff)}
-            className="w-4 h-4"
-          />
-          <span className="text-sm" style={{ color: '#99ccff' }}>
-            Energy Saving Mode OFF
-          </span>
-        </label>
-      </div>
-
-      <div className="h-[400px]">
-        <Bar data={chartData} options={chartOptions} />
-      </div>
+    <div className="w-full bg-white rounded-lg shadow-sm p-6">
+      <ChartControls
+        showModeOn={showModeOn}
+        showModeOff={showModeOff}
+        setShowModeOn={setShowModeOn}
+        setShowModeOff={setShowModeOff}
+      />
+      <BarChart chartData={chartData} chartOptions={chartOptions} />
     </div>
   );
 };
