@@ -1,19 +1,43 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 
-function App() {
-  return (
-    <Router>
-      <div className="min-h-screen bg-gray-100">
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/login" element={<Login />} />
-        </Routes>
-      </div>
-    </Router>
-  );
-}
+const ProtectedRoute = ({ children }) => {
+  const isAuthenticated = !!localStorage.getItem("token");
+  return isAuthenticated ? children : <Navigate to="/login" />;
+};
+
+const AppRouter = createBrowserRouter([
+  {
+    path: "/",
+    element: <Navigate to="/login" />, 
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <ProtectedRoute>
+        <Dashboard />
+      </ProtectedRoute>
+    ),
+  },
+]);
+
+const App = () => {
+  return <RouterProvider router={AppRouter} />;
+};
 
 export default App;

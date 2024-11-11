@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../services/api";
 import Chart from "../components/Chart";
 import LogForm from "../components/LogForm";
-// import AccessLogs from "../components/AccessLogs";
+import AccessLogs from "../components/AccessLogs";
 import Spinner from "../components/Spinner";
 
 const Dashboard = () => {
@@ -19,7 +19,7 @@ const Dashboard = () => {
     try {
       const response = await api.get("/chart/data");
       setChartData(response.data);
-    //   console.log(response.data)
+      // console.log(response.data)
     } catch (error) {
       alert("Failed to fetch chart data");
     }
@@ -68,7 +68,7 @@ const Dashboard = () => {
       </div>
       {loading ? <Spinner /> : <Chart data={chartData} />}
       <LogForm />
-      {/* <AccessLogs /> */}
+      <AccessLogs />
     </div>
   );
 };
